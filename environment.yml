@@ -1,0 +1,12 @@
+name: cms
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - scipy
+  - matplotlib
+  - numba
+  - jupyterlab
+  - pytest
+  - ipykernel

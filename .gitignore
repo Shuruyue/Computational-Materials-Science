@@ -1,0 +1,18 @@
+# Course materials stay local: handouts, textbook pages, assignment statements, reference
+# solutions and starter code. Each week publishes only its README.md and my own work/.
+/week*/0[1-5]_*
+/week*/code/
+
+# The written report is handed in to the course, not published
+/week*/work/report.md
+
+# Textbooks, papers and handouts
+/*.pdf
+/*.zip
+/*.jar
+/*.txt
+
+# Python / Jupyter
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/

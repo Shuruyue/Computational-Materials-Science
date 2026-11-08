@@ -3,6 +3,10 @@
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
+**[Interactive page](https://shuruyue.github.io/Computational-Materials-Science/web/numerical-methods.html)**: recompute the core experiment of each week in the browser, from quadrature errors against their exact formulas and the V-shaped error of finite differences to forward Euler exploding on a stiff problem. The error always does what theory says: Simpson's rule falls from order 4 to 1.5 for √x, the central difference bottoms out at 3.8×10⁻¹³ near h = 5.6×10⁻⁶ before round-off takes over, and forward Euler at hλ = −2.05 amplifies its truncation error to 10³⁷.
+
+[![The interactive page: the V-shaped error of finite differences](web/numerical-methods.png)](https://shuruyue.github.io/Computational-Materials-Science/web/numerical-methods.html)
+
 Weekly programming assignments for a course in computational materials science. Each week a numerical method is written as tested code and shown to be correct against theory (**verification**: exact error formulas, closed forms, exact discrete solutions, high-precision reruns), then applied to a materials problem and compared with experiment or literature data (**validation**).
 
 Python 3 with NumPy, SciPy and Matplotlib. Every core algorithm is written from scratch; library routines are used only for comparison.
@@ -22,6 +26,7 @@ Each week's README lists the tasks, the key results, a validation table (every v
 ```text
 Computational-Materials-Science/
 ├── environment.yml          # conda environment "cms"
+├── web/                     # interactive page (GitHub Pages) and its check against the weekly modules
 └── weekNN/                  # one folder per week, all with the same structure
     ├── README.md            # tasks, key results, validation table, figures
     └── work/

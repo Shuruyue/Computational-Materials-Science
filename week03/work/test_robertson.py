@@ -58,6 +58,12 @@ def test_backward_euler_newton_short():
     assert np.max(np.abs(Y[-1] / Y_T40 - 1)) == pytest.approx(3.7e-2, rel=0.02)
 
 
+def test_backward_euler_newton_warns_when_not_converged():
+    # one Newton iteration cannot reach tol = 1e-10 on the first, stiffest steps
+    with pytest.warns(RuntimeWarning, match="Newton did not converge"):
+        backward_euler_newton(10, t_end=40.0, maxit=1)
+
+
 def test_rk4_fixed_stable_and_unstable():
     good = rk4_fixed(60000)
     assert not good['blew_up'] and np.max(np.abs(good['y'] / Y_T40 - 1)) < 1e-9

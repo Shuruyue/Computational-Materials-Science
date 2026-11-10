@@ -50,6 +50,7 @@ def test_stability_function_is_one_step_on_y_equals_lam_y(R):
 def test_rk4_real_limit():
     z = rk4_real_limit()
     assert z == pytest.approx(-2.785293563, abs=1e-9)
+    # after the Newton polish only the evaluation of R is left: eps * sum|terms| = 3.1e-15
     assert R_rk4(z) == pytest.approx(1.0, abs=1e-14)
     assert R_tr(-1e5) == pytest.approx(-0.99996, abs=1e-8)       # exercise 4.8
 

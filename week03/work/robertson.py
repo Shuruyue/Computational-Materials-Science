@@ -8,6 +8,8 @@ y1' = -k1 y1 + k3 y2 y3,  y2' = k1 y1 - k3 y2 y3 - k2 y2^2,  y3' = k2 y2^2,  y(0
 """
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -123,6 +125,10 @@ def backward_euler_newton(M: int, t_end: float = 4e10, tol: float = 1e-10, maxit
                 rel = np.where(delta == 0, 0.0, abs(delta) / abs(z))
             if rel.max() < tol:
                 break
+        else:
+            warnings.warn(f"Newton did not converge in {maxit} iterations at step {n + 1} "
+                          f"(t = {t[n + 1]:.3g}): max |Delta|/|z| = {rel.max():.2e} > tol = {tol:g}",
+                          RuntimeWarning, stacklevel=2)
         Y[n + 1] = z
         iters[n] = k
     return t, Y, iters

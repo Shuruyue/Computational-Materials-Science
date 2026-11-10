@@ -103,11 +103,11 @@ Each value of this run next to an independent check: a theoretical value, a clos
 
 ## Differences from the course's reference solution
 
-The last section of the notebook lists where the results differ from the course's reference solution, with numbers. In short:
+Most values of the course's reference solution agree with this run to the digits they give. The last section of the notebook lists, with numbers, the few places where they differ. In short:
 
-- The asymptotic trapezoid order for √x is exactly 1.5; the reference's 1.495 is a bias of fitting at finite N.
+- The asymptotic trapezoid order for √x is exactly 1.5; a slope of 1.495 is what a fit at finite N gives.
 - The error for e^{cos x} bends downward on a semi-log plot (super-exponential convergence); it is not a straight line.
-- At 298 K the reference leaves out the electronic heat capacity γT = 0.21 J mol⁻¹ K⁻¹. With it, the Debye model is −0.6% from experiment instead of −1.5%.
+- At 298 K, adding the electronic heat capacity γT = 0.21 J mol⁻¹ K⁻¹ brings the Debye model to −0.6% from experiment instead of −1.5%.
 
 ## Figures
 

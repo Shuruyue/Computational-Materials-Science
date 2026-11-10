@@ -18,7 +18,7 @@ The executed notebook [`work/lab02.ipynb`](work/lab02.ipynb) shows every number 
 
 - **Floating point.** ε = 2.220446×10⁻¹⁶ after 52 halvings. At x = 10⁻⁸, (1 − cos x)/x² computed directly gives 0 and the rewritten 2 sin²(x/2)/x² gives 0.5; the direct small root of x² − 10⁸x + 1 is exactly 2⁻²⁷, 25.5% off.
 - **The V shape, split exactly.** For every stencil the program's error minus the exact truncation series is the round-off itself, and it stays inside the bound of the lecture notes (at most 24% of it for D₊ and 38% for D₀). The smallest D₀ error is 3.8×10⁻¹³ at h = 5.6×10⁻⁶, near the predicted h* = 1.0×10⁻⁵; h = 10⁻¹² is worse than h = 10⁻².
-- **Higher order and the complex step.** D² = −1.1102 at h = 10⁻⁸ is exactly −1 spacing of sin 1 divided by h². D₅ reaches 1.5×10⁻¹⁴, 24 times better than D₀. The complex step has no round-off arm: its error is exactly 0 for every h ≤ 10⁻⁸.
+- **Higher order and the complex step.** D² = −1.1102 at h = 10⁻⁸ is exactly −1 spacing of sin 1 divided by h². D₅ reaches 1.5×10⁻¹⁴, 24 times better than D₀. The complex step has no round-off arm: for every h ≤ 10⁻⁸ its error is 0 in this run, and at most one unit in the last place with other builds of NumPy.
 - **C_V of Cu.** U(100 K) = 583.92606 J/mol agrees with the series solution to a relative 4.6×10⁻¹⁴. Three steps give p_obs = 1.9997; Richardson with p = 2 is off by only −1.84×10⁻⁸, as predicted by the next terms of the error series. The best step is 10⁻⁴–10⁻³ K, not 10⁻⁵, because U(T) varies on a scale of x_c = 63.5 K.
 - **Bulk modulus of Cu.** a₀ = 3.606407 Å, E(a₀) = −3.542855 eV and B = 139.627 GPa (2778 neighbours). Without noise, D² matches B + the exact truncation error to 11 digits at h = 0.1 Å. With 10⁻⁵ eV of noise in E the best step is 0.042 Å (1.2% strain), equal to the derived rms optimum h*_rms = (12√2 δ/|E⁗|)^{1/4}; at h = 0.001 Å the noise makes B 200% wrong.
 - **Validation.** a₀, the cohesive energy and B are within 2% of experiment, but these three quantities were used to fit the potential. The genuine prediction, the vacancy formation energy, is 3.54 eV against about 1.28 eV in experiment: a model error of the pair potential that no choice of step can remove.
@@ -170,9 +170,9 @@ Each value of this run next to an independent check: a theoretical value, a clos
 
 ## Differences from the course's reference solution
 
-The last section of the notebook lists where the results differ from the course's reference solution, with numbers. In short:
+Most values of the course's reference solution agree with this run to the digits they give. The last section of the notebook lists, with numbers, the few places where they differ. In short:
 
-- Raising the neighbour cutoff from |s| ≤ 5.5 to 7 changes E(a₀) by −1.14×10⁻⁸ eV, not about 1.4×10⁻⁹ eV, which slightly exceeds the 10⁻⁸ threshold of the assignment; its effect on B is only 10⁻⁷.
+- Raising the neighbour cutoff from |s| ≤ 5.5 to 7 changes E(a₀) by −1.14×10⁻⁸ eV (the reference estimates about 1.4×10⁻⁹ eV), slightly above the 10⁻⁸ threshold of the assignment; its effect on B is only 10⁻⁷.
 - With re-selected neighbours, the 0.4% shift of B comes from the 10 Å cutoff itself (B_cut = 140.18 GPa), not from the truncation error of the step.
 - Richardson extrapolation with the theoretical p = 2 is 4 times more accurate than with p_obs.
 - The 3rd digit of D₃ at h = 0.001 is already round-off.
@@ -186,7 +186,7 @@ The last section of the notebook lists where the results differ from the course'
 
 ![Second derivative, Richardson and complex step](work/figures/fig2_higher.png)
 
-*Task 2: the second difference D² and Richardson D₅ show the same V, with minima shifted by their order and round-off coefficient. The complex step has no left arm: its error is exactly 0 for h ≤ 10⁻⁸.*
+*Task 2: the second difference D² and Richardson D₅ show the same V, with minima shifted by their order and round-off coefficient. The complex step has no left arm: its error is 0 in this run for h ≤ 10⁻⁸ (at most one unit in the last place elsewhere).*
 
 ![C_V of Cu by central difference](work/figures/fig3_debye_dUdT.png)
 

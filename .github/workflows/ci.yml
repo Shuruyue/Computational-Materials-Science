@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install numpy scipy matplotlib pytest
+      - name: week01
+        working-directory: week01/work
+        run: pytest -q
+      - name: week02
+        working-directory: week02/work
+        run: pytest -q
+      - name: week03
+        working-directory: week03/work
+        run: pytest -q
+      - name: Interactive page vs weekly modules (Node.js)
+        working-directory: web
+        run: pytest -q

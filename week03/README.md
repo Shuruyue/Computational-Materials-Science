@@ -16,7 +16,7 @@ The executed notebook [`work/lab03.ipynb`](work/lab03.ipynb) shows every number 
 
 ## Key results
 
-- **Small residual, large error.** For the Hilbert matrix the residual stays at 10⁻¹⁶ while the error grows to 24% at n = 12, always within κε. The exact condition number at n = 14 is 1.85×10¹⁹; `np.linalg.cond` gives only 2.9×10¹⁷.
+- **Small residual, large error.** For the Hilbert matrix the residual stays at 10⁻¹⁶ while the error grows to 24% at n = 12 in this run, always within κε. (This error is pure round-off and depends on the LAPACK build: other machines give 28% or 70%, all within κε = 380%.) The exact condition number at n = 14 is 1.85×10¹⁹; `np.linalg.cond` gives only 2.9×10¹⁷ here.
 - **Thomas and 1D Poisson.** Thomas agrees with LAPACK to 2×10⁻¹⁶ and its time grows ∝ n. The Poisson error equals the exact discrete error formula (ratio within 1 ± 5×10⁻⁷ for k ≤ 10, slope 2.001) until round-off takes over; the minimum, 2.3×10⁻¹⁰, is at h = 1.5×10⁻⁵.
 - **CVD boundary conditions.** The program matches the exact solution of the difference equations to round-off, so the error of each boundary form has a closed form: ghost-point error × N² → 0.08541 (second order), one-sided error × N → 0.2562 (first order). Step coverage SC ≥ 0.9 at aspect ratio 20 needs a sticking probability s ≤ 1.82×10⁻⁴.
 - **Conjugate gradients.** 45, 92, 187, 379, 768 and 1557 iterations for m = 15 … 511, i.e. ∝ m (about 3(m + 1)); steepest descent needs 926, 3772 and 15173, ∝ m². The DST solution separates the iteration error from the discretization error, and error/h² → 0.09304, which matches max|e| of the error equation to 5 digits.
@@ -187,20 +187,20 @@ Each value of this run next to an independent check: a theoretical value, a clos
 | 4f | BDF default: final y1 | −2235254.8 | 5.2083452×10⁻⁸ | reference | 4.3×10¹³ | -2.235e+06 |
 | 4f | BDF default: first t with y2 &lt; 0 | 1.8889814×10¹⁰ |  |  |  | 1.9e10 |
 | 4f | BDF default: max \|sum - 1\| | 5.8207661×10⁻¹¹ | 4.8849813×10⁻¹⁰ | eps \* 2.2e6 | 8.8×10⁻¹ | 2.3 |
-| 4f | Radau default: rel. error y1 | 0.03256362 | 0.001 | rtol | 3.2×10¹ | "lucky" |
+| 4f | Radau default: rel. error y1 | 0.03256362 | 0.001 | rtol | 3.2×10¹ | (no number) |
 | 4f | LSODA default: final y1 | −3.1763381×10⁻⁷ | 5.2083452×10⁻⁸ | reference | 7.1 | -3.19e-07 |
 
 </details>
 
 ## Differences from the course's reference solution
 
-The last section of the notebook lists where the results differ from the course's reference solution, with numbers. In short:
+Most values of the course's reference solution agree with this run to the digits they give. The last section of the notebook lists, with numbers, the few places where they differ. In short:
 
-- The 10³⁷ of forward Euler at N = 2048 is not "extremely sensitive to round-off" but to h: the 40-digit rerun agrees with double to 7×10⁻¹⁰, while h = 0.000976 gives 2.8×10³⁶ and h = 0.000977 gives 1.5×10³⁸.
-- The 8×10⁻¹⁵ of RK4 at N = 5120 is not round-off: the 40-digit rerun gives 8.6×10⁻¹⁵, still on the slope-4 line.
-- The true condition number of the 14 × 14 Hilbert matrix is 1.85×10¹⁹, so κε = 4.1×10³, not 56.
-- BDF's max|y₁ + y₂ + y₃ − 1| = 2.3 at default tolerances cannot be round-off (that is about 5×10⁻¹⁰); without the analytic Jacobian it is 40.6 here.
-- Radau at default tolerances is not "lucky": its y₁ is 3.3% off, 33 times rtol.
+- The 10³⁷ of forward Euler at N = 2048 depends on the step size rather than on round-off: the 40-digit rerun agrees with double to 7×10⁻¹⁰, while h = 0.000976 gives 2.8×10³⁶ and h = 0.000977 gives 1.5×10³⁸.
+- The 8×10⁻¹⁵ of RK4 at N = 5120 is still truncation error: the 40-digit rerun gives 8.6×10⁻¹⁵, on the slope-4 line.
+- From the exact inverse, the condition number of the 14 × 14 Hilbert matrix is 1.85×10¹⁹ (κε = 4.1×10³); `np.linalg.cond` underestimates it for n ≥ 12, as the reference also notes.
+- BDF's max|y₁ + y₂ + y₃ − 1| = 2.3 at default tolerances is far above the round-off of the sum (about 5×10⁻¹⁰), so the total really drifts; without the analytic Jacobian it reaches 40.6 here.
+- Radau at default tolerances also misses: its y₁ is 3.3% off, 33 times rtol.
 
 ## Figures
 
@@ -234,7 +234,7 @@ The last section of the notebook lists where the results differ from the course'
 | `work/cg.py` | matrix-free `lap`, `cg`, `sd`, `poisson_dst`, the manufactured solution and the error equation |
 | `work/ode.py` | forward / backward Euler, trapezoidal rule, RK4, stability functions, 40-digit `dcos` and `dsin` |
 | `work/robertson.py` | rates, analytic Jacobian, fast and slow eigenvalues, `solve` (wraps `solve_ivp`), fixed-step RK4, backward Euler + Newton |
-| `work/test_*.py` | 69 tests |
+| `work/test_*.py` | 70 tests (69 when the notebook was run; a test for the Newton warning was added later) |
 | `work/lab03.ipynb`, `work/lab03.html` | the executed notebook |
 | `work/figures/` | the five figures above |
 

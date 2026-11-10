@@ -90,7 +90,12 @@ def rk4_real_limit() -> float:
     """Left end of RK4's stability interval on the real axis. R(z) > 0 there, so the boundary is
     R(z) = 1: z (1 + z/2 + z^2/6 + z^3/24) = 0, i.e. the real root of z^3 + 4z^2 + 12z + 24 = 0."""
     roots = np.roots([1, 4, 12, 24])
-    return float(roots[np.argmin(abs(roots.imag))].real)
+    z = float(roots[np.argmin(abs(roots.imag))].real)
+    # np.roots (companion-matrix eigenvalues) is a few ulp off, which |R'(z)| ~ 1.5 turns into
+    # R(z) - 1 ~ 1e-14 depending on the LAPACK build; two Newton steps on the cubic fix that
+    for _ in range(2):
+        z -= (z**3 + 4 * z**2 + 12 * z + 24) / (3 * z**2 + 8 * z + 12)
+    return z
 
 
 # ---------------------------------------------------------------------------------------

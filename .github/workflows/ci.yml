@@ -31,6 +31,9 @@ jobs:
       - name: week03
         working-directory: week03/work
         run: pytest -q
+      - name: week04
+        working-directory: week04/work
+        run: pytest -q
       - name: Interactive page vs weekly modules (Node.js)
         working-directory: web
         run: pytest -q

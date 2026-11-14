@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Numerical Methods Lab</title>
-<meta name="description" content="Interactive companion to weekly computational materials science assignments: quadrature convergence, the V-shaped error of finite differences and the stability of time steppers, computed live in the browser.">
+<meta name="description" content="Interactive companion to weekly computational materials science assignments: quadrature convergence, the V-shaped error of finite differences, the stability of time steppers and explicit diffusion (FTCS), computed live in the browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
@@ -174,7 +174,7 @@ a { color: var(--accent-ink); }
   <header class="head">
     <h1><span class="en">Computational-Materials-Science · weekly assignments · verification first</span>Numerical methods, checked against theory</h1>
     <p class="sys">Each week of the course turns a numerical method into tested code and shows that its error is exactly what theory predicts. This page recomputes the core experiment of each week <b>in your browser</b>: change the inputs and watch the error follow, or break away from, the formula.</p>
-    <p class="links"><a href="https://github.com/Shuruyue/Computational-Materials-Science">Repository</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week01">Week 1</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week02">Week 2</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week03">Week 3</a></p>
+    <p class="links"><a href="https://github.com/Shuruyue/Computational-Materials-Science">Repository</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week01">Week 1</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week02">Week 2</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week03">Week 3</a><a href="https://github.com/Shuruyue/Computational-Materials-Science/tree/main/week04">Week 4</a></p>
   </header>
 
   <section class="readouts" aria-label="Results" id="readouts"></section>
@@ -193,6 +193,10 @@ a { color: var(--accent-ink); }
       <div class="grp" data-tab="w3"><h2>Week 3 · y′ = λ(y − cos t) − sin t, y(0) = 1, t ≤ 2</h2>
         <div class="presets" id="w3pre"></div><div id="w3ctl"></div><div class="checks" id="w3m"></div>
       </div>
+      <div class="grp" data-tab="w4"><h2>Week 4 · c<sub>t</sub> = c<sub>xx</sub> on [0, 10], c(0, t) = 1, c(x, 0) = 0, run to t ≈ 1</h2>
+        <div class="presets" id="w4pre"></div><div id="w4ctl"></div>
+        <div class="seg" id="w4cor"><button type="button" data-v="cs">corner c₀⁰ = Cₛ</button><button type="button" data-v="mean">corner (Cₛ + C₀)/2</button></div>
+      </div>
     </aside>
 
     <main>
@@ -200,6 +204,7 @@ a { color: var(--accent-ink); }
         <button class="tab" role="tab" id="t-w1" aria-controls="p-w1" aria-selected="true">Week 1 · Quadrature</button>
         <button class="tab" role="tab" id="t-w2" aria-controls="p-w2" aria-selected="false">Week 2 · Finite differences</button>
         <button class="tab" role="tab" id="t-w3" aria-controls="p-w3" aria-selected="false">Week 3 · Time stepping</button>
+        <button class="tab" role="tab" id="t-w4" aria-controls="p-w4" aria-selected="false">Week 4 · Diffusion (FTCS)</button>
         <button class="tab" role="tab" id="t-about" aria-controls="p-about" aria-selected="false">About these checks</button>
       </div>
 
@@ -224,16 +229,31 @@ a { color: var(--accent-ink); }
         <div class="card"><h3>Amplification factor on the negative real axis</h3><div class="sub">For y′ = λy every method gives Y<sub>n+1</sub> = R(z) Y<sub>n</sub> with z = hλ; |R| &gt; 1 grows. The dot is the current z.</div><div class="chart" id="c3c"></div></div>
       </section>
 
+      <section class="panel" id="p-w4" role="tabpanel" aria-labelledby="t-w4" hidden>
+        <div class="answer" id="a4"></div>
+        <div class="grid2">
+          <div class="card"><h3>Profile at the end of the run</h3><div class="sub" id="s4a"></div><div class="chart" id="c4a"></div></div>
+          <div class="card"><h3>Maximum error after every step</h3><div class="sub">Log scale; above the stability limit the error grows by |g| per step, a straight line</div><div class="chart" id="c4b"></div></div>
+        </div>
+        <div class="grid2">
+          <div class="card"><h3>Error along the depth at the end</h3><div class="sub" id="s4c"></div><div class="chart" id="c4c"></div></div>
+          <div class="card"><h3>Amplification factor per step</h3><div class="sub">One step multiplies the wave e<sup>ijθ</sup> by g = 1 − 4r sin²(θ/2); dashed: the exact decay e<sup>−rθ²</sup>; |g| &gt; 1 grows</div><div class="chart" id="c4d"></div></div>
+        </div>
+        <div class="card"><h3>Only Δt changes: error against r for Δx = 0.1</h3><div class="sub">Both corner values for N = 200 … 4000 steps to t = 1. As r → 0 FTCS becomes the method of lines; its error, the dashed floor, was computed in week04/work/ftcs.py by solving the semi-discrete system exactly in time. With the mean corner the error is that floor times |1 − 6r| (dotted).</div><div class="chart" id="c4e"></div></div>
+        <div class="tablewrap"><table id="t4"></table></div>
+      </section>
+
       <section class="panel" id="p-about" role="tabpanel" aria-labelledby="t-about" hidden>
         <div class="card src">
           <h3>What is computed here</h3>
           <p><b>Week 1.</b> Trapezoid and Simpson rules as in <code>week01/work/quadrature.py</code>, for N = 2 … 65536. Exact error formulas: for sin x on [0, π], T<sub>N</sub> = (π/N) cot(π/2N) and S<sub>N</sub> = (4T<sub>N</sub> − T<sub>N/2</sub>)/3; for √x on [0, 1], T − I = ζ(−½) h<sup>3/2</sup> + h²/24 + O(h⁴); for e<sup>cos x</sup> over one period, T<sub>N</sub> − I = 4π Σ<sub>k≥1</sub> I<sub>kN</sub>(1).</p>
           <p><b>Week 2.</b> The stencils of <code>week02/work/finite_diff.py</code> for f = sin at x₀, over 65 steps h = 10<sup>−k/4</sup>; dashed lines are the leading truncation terms from their docstrings. The complex step evaluates Im sin(x₀ + ih)/h = cos x₀ sinh h / h.</p>
           <p><b>Week 3.</b> Forward and backward Euler, the trapezoidal rule and RK4 of <code>week03/work/ode.py</code> on LeVeque's test problem, exact solution cos t; the amplification factors R(z) are those of the same file.</p>
+          <p><b>Week 4.</b> FTCS of <code>week04/work/ftcs.py</code>, c<sub>i</sub><sup>n+1</sup> = c<sub>i</sub><sup>n</sup> + r(c<sub>i+1</sub><sup>n</sup> − 2c<sub>i</sub><sup>n</sup> + c<sub>i−1</sub><sup>n</sup>), on [0, 10] with the surface held at 1 and the right end at 0, N = round(1/Δt) steps; exact solution erfc(x/(2√t)). The browser has no erfc, so the page computes it from the all-positive series for erf below x = 2.5 and from the continued fraction of erfc above. The stability limit with fixed ends is 1/(2 sin²((M − 1)π/(2M))), and the r → 0 floor is the method-of-lines error of the same file.</p>
         </div>
         <div class="card src">
           <h3>Checks</h3>
-          <p>web/verify_web_page.py runs the functions of this page in Node.js and compares them with the Python modules of the weeks: trapezoid and Simpson values for the three integrands and N = 2 to 65536, the exact error formulas against SciPy (zeta and Bessel functions), every stencil for 20 points x0 at steps where truncation dominates, all four time steppers on the test problem for several λ and N, and the RK4 stability limit. It passes only if every number agrees to a relative 1e-9.</p>
+          <p>web/verify_web_page.py runs the functions of this page in Node.js and compares them with the Python modules of the weeks: trapezoid and Simpson values for the three integrands and N = 2 to 65536, the exact error formulas against SciPy (zeta and Bessel functions), every stencil for 20 points x0 at steps where truncation dominates, all four time steppers on the test problem for several λ and N, the RK4 stability limit, the FTCS profiles of week 4 (stable and unstable, both corners, both right-end conditions), the page's erfc against SciPy for 0 ≤ x ≤ 8, the FTCS maximum errors, the amplification factors and the method-of-lines floor. It passes only if every number agrees to a relative 1e-9 (maximum errors below 10⁻⁶ are compared in absolute terms, to 10⁻¹⁵).</p>
           <p>The browser computes in the same IEEE double precision as NumPy, but its sine and exponential may round differently in the last bit, so where round-off dominates (the left arm of the V shape, errors near 10⁻¹⁶) the points can differ in detail from the notebooks; the trends cannot.</p>
         </div>
       </section>
@@ -422,7 +442,7 @@ class Chart {
 }
 
 
-// ---- physics: begin (copies of week01 quadrature.py, week02 finite_diff.py, week03 ode.py; checked by web/verify_web_page.py)
+// ---- physics: begin (copies of week01 quadrature.py, week02 finite_diff.py, week03 ode.py, week04 ftcs.py and diffusion.py; checked by web/verify_web_page.py)
 const EPS = 2.220446049250313e-16, ZETA_M_HALF = -0.20788622497735457;
 function trapezoid(f, a, b, N) { const h = (b - a) / N; let s = 0; for (let i = 1; i < N; i++) s += f(a + i * h); return h * (0.5 * f(a) + s + 0.5 * f(b)); }
 function simpson(f, a, b, N) {
@@ -461,6 +481,39 @@ function solveAll(lam, N, T) {
   const h = T / N, [f, g] = cosProblem(lam);
   return { h, fe: forwardEuler(f, 1, h, N), be: backwardEulerLinear(lam, g, 1, h, N), tr: trapezoidLinear(lam, g, 1, h, N), rk4: rk4(f, 1, h, N) };
 }
+// week 4: erfc (the browser has none), the FTCS update of ftcs.py, amplification factors and the r -> 0 floor
+function erfc(x) {
+  if (x < 0) return 2 - erfc(-x);
+  if (x < 2.5) {   // 1 - erf, with erf x = (2/sqrt(pi)) exp(-x^2) sum_n (2x^2)^n x / (1*3*...*(2n+1)): all terms positive
+    const x2 = 2 * x * x; let term = x, sum = x;
+    for (let n = 1; n < 300; n++) { term *= x2 / (2 * n + 1); sum += term; if (term < sum * 1e-17) break; }
+    return 1 - 2 / Math.sqrt(Math.PI) * Math.exp(-x * x) * sum;
+  }
+  if (x > 27) return 0;
+  let d = x; for (let k = 160; k >= 1; k--) d = x + (k / 2) / d;   // erfc x = exp(-x^2)/sqrt(pi) / (x + (1/2)/(x + 1/(x + (3/2)/(x + ...))))
+  return Math.exp(-x * x) / Math.sqrt(Math.PI) / d;
+}
+const ctExact = (x, t) => x * Math.exp(-x * x / (4 * t)) / (2 * Math.sqrt(Math.PI) * t ** 1.5);
+// FTCS from c = 0 with the surface c_0 = 1 for n >= 1 and the corner c_0^0 given; right end Dirichlet 0 or zero flux (ghost point)
+function ftcs(M, r, N, corner = 1, right = "dirichlet", onStep = null) {
+  let c = new Float64Array(M + 1), nw = new Float64Array(M + 1); c[0] = corner;
+  for (let n = 1; n <= N; n++) {
+    for (let i = 1; i < M; i++) nw[i] = c[i] + r * (c[i + 1] - 2 * c[i] + c[i - 1]);
+    nw[M] = right === "dirichlet" ? 0 : c[M] + 2 * r * (c[M - 1] - c[M]);
+    nw[0] = 1; const old = c; c = nw; nw = old;
+    if (onStep) onStep(n, c);
+  }
+  return c;
+}
+function ftcsMaxError(M, L, r, N, corner = 1, right = "dirichlet") {
+  const dx = L / M, T = N * (r * dx * dx), s = 2 * Math.sqrt(T), c = ftcs(M, r, N, corner, right); let e = 0;
+  for (let i = 0; i <= M; i++) { const d = Math.abs(c[i] - erfc(i * dx / s)); if (isNaN(d)) return NaN; if (d > e) e = d; }
+  return e;
+}
+const amplification = (r, th) => 1 - 4 * r * Math.sin(th / 2) ** 2;
+const fixedEndsGrowth = (r, M) => Math.abs(1 - 4 * r * Math.sin((M - 1) * Math.PI / (2 * M)) ** 2);
+const rLimit = (M) => 1 / (2 * Math.sin((M - 1) * Math.PI / (2 * M)) ** 2);
+const MOL_FLOOR = 1.3566746244023098e-4;   // method_of_lines(100, 10, 1) in ftcs.py: the r -> 0 error for dx = 0.1, t = 1
 // ---- physics: end
 
 // =================================================================== state and controls
@@ -473,10 +526,12 @@ const E = (v, d = 2) => supify(sci(v, d));
 function decadeTicks(lo, hi, maxN = 8) { const a = Math.ceil(Math.log10(lo) - 1e-9), b = Math.floor(Math.log10(hi) + 1e-9), step = Math.max(1, Math.ceil((b - a + 1) / maxN)), t = []; for (let e = b; e >= a; e -= step) t.push(Math.pow(10, e)); return t.reverse(); }
 const METHODS = { fe: { label: "forward Euler", color: "var(--s2)" }, be: { label: "backward Euler", color: "var(--s1)" }, tr: { label: "trapezoidal rule", color: "var(--s3)" }, rk4: { label: "RK4", color: "var(--s4)" } };
 const SCOL = { forward: "var(--s2)", central: "var(--s1)", one_sided3: "var(--s3)", richardson5: "var(--s4)", complex: "var(--s5)" };
-const DEFAULT = { tab: "w1", fun: "sin", T: true, S: true, F: true, x0: 1, st: "forward,central,richardson5,complex", lead: true, lam: -10, N: 40, m: "fe,be,tr,rk4" };
+const DEFAULT = { tab: "w1", fun: "sin", T: true, S: true, F: true, x0: 1, st: "forward,central,richardson5,complex", lead: true, lam: -10, N: 40, m: "fe,be,tr,rk4", r4: 0.4, M4: 100, cor: "cs" };
 const S = Object.assign({}, DEFAULT);
 for (const [k, v] of new URLSearchParams(location.hash.slice(1))) if (k in DEFAULT) S[k] = typeof DEFAULT[k] === "number" ? (isFinite(+v) ? +v : DEFAULT[k]) : typeof DEFAULT[k] === "boolean" ? v === "1" : v;
 if (!(S.fun in INTEGRANDS)) S.fun = "sin";
+if (S.cor !== "cs" && S.cor !== "mean") S.cor = "cs";
+S.r4 = Math.min(0.6, Math.max(0.05, S.r4)); S.M4 = Math.min(400, Math.max(10, Math.round(S.M4)));
 const theme = new URLSearchParams(location.search).get("theme"); if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
 function saveHash() { const p = new URLSearchParams(); for (const k in DEFAULT) if (S[k] !== DEFAULT[k]) p.set(k, typeof S[k] === "boolean" ? (S[k] ? "1" : "0") : S[k]); history.replaceState(null, "", p.toString() ? "#" + p.toString() : location.pathname + location.search); }
 const listHas = (key, v) => S[key].split(",").includes(v);
@@ -501,7 +556,15 @@ function slider(host, p) {
 slider($("w2ctl"), { k: "x0", lab: "x₀", u: "", min: 0.05, max: 3.1, map: (v) => v, inv: (v) => v, round: (v) => +v.toFixed(3) });
 slider($("w3ctl"), { k: "lam", lab: "λ", u: "", min: -1, max: -10000, map: (v) => Math.log10(-v), inv: (v) => -Math.pow(10, v), round: (v) => Math.round(v) || -1 });
 slider($("w3ctl"), { k: "N", lab: "Steps N", u: "(h = 2/N)", min: 5, max: 20000, map: (v) => Math.log10(v), inv: (v) => Math.pow(10, v), round: (v) => Math.max(1, Math.round(v)) });
-const TABS = ["w1", "w2", "w3", "about"];
+for (const [lab, note, r, M, cor] of [["r = 0.4, Δx = 0.1", "Task 1: error 5.1×10⁻⁴, half a step early", 0.4, 100, "cs"], ["r = 1/6, mean corner", "time and space errors cancel: 7×10⁻⁸", 1 / 6, 100, "mean"],
+  ["r = ½", "the centre weight is 0: every other point is wasted", 0.5, 100, "cs"], ["r = 0.51", "unstable: the error passes 1 after 187 steps", 0.51, 100, "cs"]]) {
+  const b = el("button", "preset"); b.type = "button"; b.dataset.r = r; b.dataset.M = M; b.dataset.cor = cor; b.append(document.createTextNode(lab), el("small", null, note));
+  b.addEventListener("click", () => { S.r4 = r; S.M4 = M; S.cor = cor; update(); }); $("w4pre").append(b);
+}
+slider($("w4ctl"), { k: "r4", lab: "r = DΔt/Δx²", u: "", min: 0.05, max: 0.6, map: (v) => v, inv: (v) => v, round: (v) => +v.toFixed(3) });
+slider($("w4ctl"), { k: "M4", lab: "Intervals M", u: "(Δx = 10/M)", min: 10, max: 400, map: (v) => Math.log10(v), inv: (v) => Math.pow(10, v), round: (v) => Math.round(v) });
+for (const b of $("w4cor").querySelectorAll("button")) b.addEventListener("click", () => { S.cor = b.dataset.v; update(); });
+const TABS = ["w1", "w2", "w3", "w4", "about"];
 for (const t of TABS) $("t-" + t).addEventListener("click", () => { S.tab = t; update(); });
 
 // =================================================================== week 1
@@ -577,16 +640,93 @@ function week3() {
   return Object.keys(METHODS).map((k) => [METHODS[k].label + " at t = 2", E(fin(k)), "|R(z)| = " + Math.abs(R[k](z)).toPrecision(4)]);
 }
 
+// =================================================================== week 4
+const c4a = new Chart($("c4a"), { height: 280 }), c4b = new Chart($("c4b"), { height: 280, m: { l: 58, r: 12, t: 10, b: 40 } });
+const c4c = new Chart($("c4c"), { height: 270, m: { l: 66, r: 12, t: 10, b: 40 } }), c4d = new Chart($("c4d"), { height: 270 });
+const c4e = new Chart($("c4e"), { height: 300, m: { l: 58, r: 12, t: 10, b: 40 } });
+const L4 = 10, V_N = [200, 250, 300, 400, 500, 550, 580, 600, 620, 650, 700, 800, 1000, 1250, 1600, 2000, 4000];
+let vCache = null;
+function vCurve() {   // error against r for dx = 0.1, both corners; fixed, so computed once
+  if (!vCache) vCache = { r: V_N.map((n) => 100 / n), cs: V_N.map((n) => ftcsMaxError(100, L4, 100 / n, n, 1)), mean: V_N.map((n) => ftcsMaxError(100, L4, 100 / n, n, 0.5)) };
+  return vCache;
+}
+function run4(M, r, corner) {   // N = round(1/dt) steps (t close to 1) with the maximum error recorded at up to 400 steps
+  const dx = L4 / M, dt = r * dx * dx, N = Math.max(1, Math.round(1 / dt)), stride = Math.max(1, Math.ceil(N / 400)), hist = [];
+  const errAt = (cc, t) => { const s = 2 * Math.sqrt(t); let e = 0; for (let i = 0; i <= M; i++) { const d = Math.abs(cc[i] - erfc(i * dx / s)); if (isNaN(d)) return NaN; if (d > e) e = d; } return e; };
+  const c = ftcs(M, r, N, corner, "dirichlet", (n, cc) => { if (n % stride === 0 || n === N) hist.push([n * dt, errAt(cc, n * dt)]); });
+  return { dx, dt, N, T: N * dt, c, hist, stride };
+}
+function week4() {
+  const r = S.r4, M = S.M4, corner = S.cor === "mean" ? 0.5 : 1, run = run4(M, r, corner), { dx, dt, N, T, c } = run;
+  const lim = rLimit(M), gWorst = 1 - 4 * r * Math.sin((M - 1) * Math.PI / (2 * M)) ** 2, unstable = Math.abs(gWorst) > 1, s = 2 * Math.sqrt(T);
+  const xs = Array.from({ length: M + 1 }, (_, i) => i * dx), errs = xs.map((x, i) => c[i] - erfc(x / s));
+  const fin = errs.filter((v) => isFinite(v)).map(Math.abs), maxErr = fin.length === errs.length ? Math.max(...fin) : Infinity;
+  const inRange = Array.from(c).every((v) => v >= -1e-12 && v <= 1 + 1e-12);
+  // profile
+  const every = Math.max(1, Math.ceil(M / 120)), clip = (v) => (isFinite(v) ? Math.max(-2.5, Math.min(2.5, v)) : NaN), pts = [];
+  for (let i = 0; i <= M && xs[i] <= 6 + 1e-9; i += every) pts.push([xs[i], clip(c[i])]);
+  c4a.set({ aria: "Concentration profile", x: { min: 0, max: 6, label: "depth x  (D = 1)" }, y: { min: inRange ? -0.05 : -2.5, max: inRange ? 1.05 : 2.5, label: "concentration c" },
+    series: [{ pts: Array.from({ length: 241 }, (_, k) => [k / 40, erfc(k / 40 / s)]), color: "var(--ink)", width: 1.4, name: "erfc(x/(2√t))", fmt: (v) => v.toFixed(6) },
+      { kind: "points", pts, color: unstable ? "var(--crit)" : "var(--s1)", r: 2.8, name: "FTCS", fmtPt: (p) => p[1].toFixed(6) }], tipTitle: (x) => "x = " + x.toFixed(3) });
+  $("s4a").textContent = `t = ${T.toPrecision(6)} after N = ${N} steps of Δt = ${E(dt, 3)}` + (inRange ? "; c stays in [0, 1]" : "; values beyond ±2.5 are cut off") + (every > 1 ? `; one point in ${every} shown` : "");
+  // error history
+  const H = run.hist.filter(([, e]) => isFinite(e) && e > 0), hlo = H.length ? Math.max(1e-16, Math.min(...H.map((p) => p[1])) / 3) : 1e-16, hhi = H.length ? Math.max(...H.map((p) => p[1])) * 3 : 1;
+  c4b.set({ aria: "Maximum error after every step", x: { min: 0, max: T, label: "time t" }, y: { min: hlo, max: hhi, log: true, ticks: decadeTicks(hlo, hhi), label: "max |c − erfc|", fmt: (v) => E(v, 0).replace("1×", "") },
+    series: [{ pts: H, color: unstable ? "var(--crit)" : "var(--s1)", name: run.stride > 1 ? `sampled every ${run.stride} steps` : "every step", fmt: (v) => E(v) }], tipTitle: (t) => "t = " + t.toFixed(4) });
+  // error profile, with the half-step part for the corner Cs
+  const ser = [{ pts: xs.map((x, i) => [x, errs[i]]), color: "var(--s2)", name: "FTCS − erfc", fmt: (v) => E(v) }];
+  if (S.cor === "cs" && !unstable) ser.push({ pts: xs.map((x) => [x, dt / 2 * ctExact(x, T)]), color: "var(--s1)", dash: "dash", width: 1.4, name: "half step early: (Δt/2) ∂c/∂t", fmt: (v) => E(v) });
+  const em = (fin.length ? Math.max(...fin) : 1) * 1.15 || 1e-300;
+  c4c.set({ aria: "Error along the depth", x: { min: 0, max: L4, label: "depth x" }, y: { min: -em, max: em, label: "c − exact", fmt: (v) => (v === 0 ? "0" : E(v, 1)) }, series: ser, tipTitle: (x) => "x = " + x.toFixed(3) });
+  $("s4c").textContent = S.cor === "cs" ? "Corner c₀⁰ = Cₛ: the run starts half a step early; dashed is (Δt/2)∂c/∂t of the exact solution" : "Corner (Cₛ + C₀)/2: no half-step shift; what is left is the truncation error";
+  // amplification factor
+  const TH = Array.from({ length: 201 }, (_, k) => k / 200), gpi = amplification(r, Math.PI);
+  c4d.set({ aria: "Amplification factor", x: { min: 0, max: 1, label: "θ/π  (1 = the sawtooth (−1)^{j})" }, y: { min: Math.min(-1.15, gpi - 0.1), max: 1.08, label: "g per step" },
+    series: [{ pts: TH.map((q) => [q, amplification(r, q * Math.PI)]), color: "var(--s1)", name: `g, r = ${+r.toPrecision(4)}`, fmt: (v) => v.toFixed(4) },
+      { pts: TH.map((q) => [q, Math.exp(-r * (q * Math.PI) ** 2)]), color: "var(--muted)", dash: "dash", width: 1.4, name: "exact e^{−rθ²}", fmt: (v) => v.toFixed(4) }],
+    marks: [{ kind: "hline", at: -1, color: "var(--crit)", dash: "dash", legend: "g = −1, the stability edge" },
+      { kind: "point", x: (M - 1) / M, y: gWorst, color: unstable ? "var(--crit)" : "var(--s3)", label: `worst mode with fixed ends, g = ${gWorst.toFixed(4)}`, dy: gWorst < -0.5 ? -10 : 16 }],
+    tipTitle: (q) => "θ = " + q.toFixed(3) + "π" });
+  // error against r
+  const V = vCurve(), vmarks = [{ kind: "hline", at: MOL_FLOOR, color: "var(--muted)", dash: "dash", legend: "r → 0 limit (method of lines) " + E(MOL_FLOOR, 3) }];
+  if (r <= 0.52) vmarks.push({ kind: "vline", at: r, color: "var(--ink-2)", width: 1.2, legend: "current r = " + +r.toPrecision(4) });
+  c4e.set({ aria: "Error against r", x: { min: 0, max: 0.52, label: "r = DΔt/Δx²" }, y: { min: 3e-8, max: 3e-3, log: true, ticks: decadeTicks(3e-8, 3e-3), label: "max error at t = 1", fmt: (v) => E(v, 0).replace("1×", "") },
+    series: [{ pts: V.r.map((q, k) => [q, V.cs[k]]), color: "var(--s2)", width: 1.2, noLegend: true, tip: false }, { kind: "points", pts: V.r.map((q, k) => [q, V.cs[k]]), color: "var(--s2)", r: 3.4, name: "corner Cₛ", fmtPt: (p) => E(p[1], 3) },
+      { pts: V.r.map((q, k) => [q, V.mean[k]]), color: "var(--s3)", width: 1.2, noLegend: true, tip: false }, { kind: "points", pts: V.r.map((q, k) => [q, V.mean[k]]), color: "var(--s3)", shape: "square", r: 3.2, name: "corner (Cₛ + C₀)/2", fmtPt: (p) => E(p[1], 3) },
+      { pts: Array.from({ length: 521 }, (_, k) => [k / 1000, MOL_FLOOR * Math.abs(1 - 6 * k / 1000)]), color: "var(--ink-2)", dash: "dot", width: 1.3, name: "floor × |1 − 6r|", tip: false }],
+    marks: vmarks, tipTitle: (q) => "r = " + q.toFixed(4) });
+  // convergence table at the current r and corner
+  const t = $("t4"); t.textContent = ""; const hr = el("tr"); for (const h of ["Δx", "M", "steps N", "t at the end", "max error", "ratio", "order log₂(ratio)"]) hr.append(el("th", null, h)); t.append(hr);
+  const conv = [25, 50, 100, 200].map((m) => { const d = L4 / m, n = Math.max(1, Math.round(1 / (r * d * d))); return { m, d, n, t: n * r * d * d, e: ftcsMaxError(m, L4, r, n, corner) }; });
+  conv.forEach((q, k) => { const ok = k > 0 && isFinite(q.e) && isFinite(conv[k - 1].e) && q.e > 0, ratio = ok ? conv[k - 1].e / q.e : NaN, tr = el("tr");
+    tr.append(el("td", null, String(q.d)), el("td", null, String(q.m)), el("td", null, String(q.n)), el("td", null, q.t.toFixed(5)), el("td", null, isFinite(q.e) ? E(q.e, 4) : "overflow"), el("td", null, ok ? ratio.toFixed(3) : "—"), el("td", null, ok ? Math.log2(ratio).toFixed(3) : "—")); t.append(tr); });
+  // answer
+  const say = [];
+  if (unstable) say.push(`<b>Unstable.</b> r = ${+r.toPrecision(4)} is above the limit 1/(2 sin²((M − 1)π/(2M))) = ${lim.toFixed(5)} for M = ${M}. The centre weight 1 − 2r = ${(1 - 2 * r).toFixed(3)} is negative, so each new value is an extrapolation, not an average, and the most dangerous mode is multiplied by g = ${gWorst.toFixed(4)} every step: the error grows like |g|<sup>n</sup>, a straight line on the log chart.`);
+  else {
+    say.push(r > 0.5 ? `Stable although r &gt; ½: with only M = ${M} intervals the shortest mode is not the sawtooth, and the limit is ${lim.toFixed(5)}; the periodic-grid value ½ is the M → ∞ limit.`
+      : `Stable: the weights r, 1 − 2r, r = ${+r.toPrecision(4)}, ${+(1 - 2 * r).toPrecision(4)}, ${+r.toPrecision(4)} are all ≥ 0, so each new value is an average of three old ones and c stays in [0, 1].`);
+    say.push(S.cor === "cs" ? "With the corner c₀⁰ = Cₛ the first step puts in about twice the right amount and the run is half a step early: the error is close to (Δt/2)∂c/∂t, which is ∝ Δt ∝ Δx², so the order stays 2 even at r = 1/6."
+      : "With the mean corner (Cₛ + C₀)/2 the half-step shift is gone; what is left is the truncation error (DΔx²/2)(r − 1/6)c<sub>xxxx</sub>, which vanishes at r = 1/6 and leaves fourth order (see the table).");
+    if (Math.abs(r - 0.5) < 1e-12) say.push("At r = ½ the centre weight is 0: the even points are the r = ¼ run on a grid twice as coarse, so half the points add nothing.");
+  }
+  $("a4").innerHTML = "<p>" + say.join(" ") + "</p>";
+  return [["r = DΔt/Δx²", String(+r.toPrecision(6)), `Δx = ${+dx.toPrecision(6)}, Δt = ${E(dt, 3)}`], ["Steps", String(N), `to t = ${T.toPrecision(6)}`],
+    ["Max error at the end", !isFinite(maxErr) ? "overflow" : maxErr >= 0.01 && maxErr < 1000 ? maxErr.toPrecision(4) : E(maxErr, 3), unstable ? "unstable" : "against erfc"], ["Worst mode, fixed ends", "|g| = " + Math.abs(gWorst).toFixed(4), `stable for r ≤ ${lim.toFixed(5)}`]];
+}
+
 // =================================================================== update
 function update(skip) {
   for (const t of TABS) { const on = t === S.tab; $("t-" + t).setAttribute("aria-selected", String(on)); $("p-" + t).hidden = !on; }
   for (const g of document.querySelectorAll(".grp[data-tab]")) g.hidden = g.dataset.tab !== S.tab && S.tab !== "about";
   for (const b of $("w1fun").querySelectorAll(".preset")) b.setAttribute("aria-pressed", String(b.dataset.v === S.fun));
   for (const b of $("w3pre").querySelectorAll(".preset")) b.setAttribute("aria-pressed", String(+b.dataset.lam === S.lam && +b.dataset.N === S.N));
+  for (const b of $("w4pre").querySelectorAll(".preset")) b.setAttribute("aria-pressed", String(Math.abs(+b.dataset.r - S.r4) < 1e-12 && +b.dataset.M === S.M4 && b.dataset.cor === S.cor));
+  for (const b of $("w4cor").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.v === S.cor));
   for (const c of $("w2st").querySelectorAll("input")) c.checked = listHas("st", c.dataset.v);
   for (const c of $("w3m").querySelectorAll("input")) c.checked = listHas("m", c.dataset.v);
   $("w1T").checked = S.T; $("w1S").checked = S.S; $("w1F").checked = S.F; $("w2F").checked = S.lead; sliders.forEach((s) => s(skip));
-  const ro = S.tab === "w1" || S.tab === "about" ? week1() : S.tab === "w2" ? week2() : week3();
+  const ro = S.tab === "w1" || S.tab === "about" ? week1() : S.tab === "w2" ? week2() : S.tab === "w3" ? week3() : week4();
   const box = $("readouts"); box.textContent = ""; for (const [k, v, s] of ro) { const d = el("div", "ro"); d.append(el("div", "k", k), el("div", "v", v)); if (s) d.append(el("div", "s", s)); box.append(d); }
   saveHash();
 }

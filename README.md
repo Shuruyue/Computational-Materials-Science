@@ -4,7 +4,7 @@
 ![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-**[Interactive page](https://shuruyue.github.io/Computational-Materials-Science/web/numerical-methods.html)**: recompute the core experiment of each week in the browser, from quadrature errors against their exact formulas and the V-shaped error of finite differences to forward Euler exploding on a stiff problem. The error always does what theory says: Simpson's rule falls from order 4 to 1.5 for √x, the central difference bottoms out at 3.8×10⁻¹³ near h = 5.6×10⁻⁶ before round-off takes over, and forward Euler at hλ = −2.05 amplifies its truncation error to 10³⁷.
+**[Interactive page](https://shuruyue.github.io/Computational-Materials-Science/web/numerical-methods.html)**: recompute the core experiment of each week in the browser, from quadrature errors against their exact formulas and the V-shaped error of finite differences to forward Euler exploding on a stiff problem and explicit diffusion breaking down just above r = ½. The error always does what theory says: Simpson's rule falls from order 4 to 1.5 for √x, the central difference bottoms out at 3.8×10⁻¹³ near h = 5.6×10⁻⁶ before round-off takes over, forward Euler at hλ = −2.05 amplifies its truncation error to 10³⁷, and FTCS at r = 0.51 passes an error of 1 after 187 steps while r = 1/6 with the right starting value reaches fourth order.
 
 [![The interactive page: the V-shaped error of finite differences](web/numerical-methods.png)](https://shuruyue.github.io/Computational-Materials-Science/web/numerical-methods.html)
 

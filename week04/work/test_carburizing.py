@@ -21,7 +21,7 @@ def test_case_time_table_lecture_5_9():
     assert hours == pytest.approx([1.50, 6.02, 13.54], abs=5e-3)
     assert case_time(1e-3, wells_mehl(875), 1.0) / HOUR == pytest.approx(10.80, abs=5e-3)
     assert case_time(1e-3, wells_mehl(975), 1.0) / HOUR == pytest.approx(3.51, abs=5e-3)
-    # exercise 5.9: the answer 2.93 h uses D(950 C) = 2.296e-11 (the rounded 2.30e-11 would give 2.92 h)
+    # exercise 5.9: 2.93 h with the full-precision D(950 C) = 2.296e-11
     assert case_time(0.8e-3, wells_mehl(950), 1.0) / HOUR == pytest.approx(2.93, abs=5e-3)
     assert case_time(1.5e-3, D925, 1.0) / case_time(1e-3, D925, 1.0) == pytest.approx(2.25, rel=1e-14)
 
